@@ -1,22 +1,24 @@
 import csv
 import string
 
-# Set up input and output variables for the script
-dogbreedlist = open("export.tsv", "r")
+# Import vocab list
+vocablist = open("export.tsv", "r")
+
+#set up translater to remove punctuation from vocab entries
 csv.register_dialect('dogbreeds', delimiter='\t', quoting=csv.QUOTE_NONE)
-# also works:
-#csv.register_dialect('dogbreeds', delimiter='	', quoting=csv.QUOTE_NONE)
 
 # Set up CSV reader and process the header
-csvReader = csv.reader(dogbreedlist, dialect="dogbreeds")
+csvReader = csv.reader(vocablist, dialect="dogbreeds")
 header = csvReader.__next__()
 
 # Make an empty list
 lemmaList = []
+#count can be used to count number of unsuccessful paradigms
 count = 0
 
-# Loop through the lines in the file and get each coordinate
+# Loop through the lines in the file
 for row in csvReader:
+#placeholders are used to avoid list index errors and to keep track of unsuccessful entries
     row.append("placeholder")
     row.append("placeholder2")
     row.append("placeholder3")
@@ -35,16 +37,20 @@ for row in csvReader:
     if row[6]=="\"Adverb\"":
         print("<e a=\"agfl-lat\" lm=",row[0],"><i>",row[0].replace('"', ''),"</i><par n=\"quasi__adv\"/></e>","<!--",row[2],"-->",sep="")
     if row[6]=="\"Verb\"":
+    #consonant list is helpful for identifying consonant-stem verbs
         consonants=["b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","u","v","w","x","y","z"]
         translator = str.maketrans('', '', string.punctuation+'–')
+   #get vocab entry (first piece of list)
         pieces = row[0].translate(translator).split()
         pieces22 = row[0].split()
+   #placeholders are used to avoid list index errors and to keep track of unsuccessful entries
         pieces.append("placeholder")
         pieces.append("placeholder2")
         pieces.append("placeholder3")
         presentStem=("placeholder")
         perfectpsvStem=("placeholder")
         perfectStem=("placeholder")
+   #split up vocab entry
         p1 = pieces[0]
         p2 = pieces[1]
         p3 = pieces[2]
@@ -201,5 +207,5 @@ for row in csvReader:
     #if paradigm == "paradigm":
     #    count = count+1
 
-# Print the coordinate list
-print(count)
+# Print the vocab list
+# print(count)
